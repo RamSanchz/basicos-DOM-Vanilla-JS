@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asincronia</title>
+</head>
+
+<body>
+    <h1>Asíncronía en JS</h1>
+
+
+    <script>
+
+
+        //*************** Asincronia JS ****************
+
+
+        //temporizadores en JS
+
+        console.log("inicio");
+
+        let temporizadorUnaVez = setTimeout(() => {// para usar los clear es necesario guardar las funciones en variables, de otro modo no se puede llamar en el clearTimeout
+            console.log("Ejecutando un SetTimeout después de 1 segundo, esto se ejecutara 1 vez")
+        }, 3000);
+
+        let temporizadorIndefi = setInterval(() => {
+            console.log("Ejecutando un setInterval, esto se ejecutara de manera indefinida cada cierto intervalo de tiempo")
+        }, 1000);
+
+        clearTimeout(temporizadorUnaVez);// estos cancelan el setTimeout
+        console.log("Despues del ClearTimeout");
+
+        clearInterval(temporizadorIndefi);// este cancela el setInterval
+        console.log("Despues del ClearInterval");
+
+
+        console.clear();
+
+            /*
+            Es importante conocer estos conceptos para saber bien como funciona la asincronia en JS
+    
+            Procesamiento single thread y Multi thread-- se refiere a la capacidad de nuestro lenguaje para llevar a cabo tareas (single se refuere a que solo puede hacacer una en el loop event) y (multi se refiere  a  que puede llevar a cabo mas de un a)-- OJO Js solo trabaja en Single Thread
+    
+            Operaciones de CPU-- que es las operaciones que afectan de manera inmediata el cpu (uso de ram al realizar procesos, etc)
+    
+            Operaciones de I(input-entrada)/O (Output-salida) --- que son aquellas que siempre se encuentran a la espera de algo para funcionar (cuando se llena un formulario o cuando se envia el formulario al servidor)
+    
+            Operaciones Concurrentes y Paralelas-- las concurrentes son aquellas que avanzan en el mismo momento y paralelas son aquellas que inicial al mismo tiempo 
+    
+            Operaciones Bloqueantes y no Bloqueantes-- las bloqueantes son aquellas que toman el control del loop event y no lo devuelven hasta que acaban su proceso(bloquean la app hasta acabar) y las no bloqueantes son aquellas que devuelven el control del loop event a la app no importa que ya hayan acabado o no(Digamos que se resuelven en segundo plano)
+    
+            Operaciones Sincronas y asincronas -- las Sincronas son aquellas que esperan una respuesta de manera inmediata o en tiempo presente y las asincronas son aquellas que esperan una respuesta en tiempo futuro y de igual (igual es como si trabajaran en segundo plano) y este por lo general va a ser no bloqueante
+    
+            */
+
+
+
+        // EN JS VAMOS A TENER 2 TIPOS DE CÓDIGO --- Asincronia
+
+        //Código Síncrono Bloqueante
+
+        (() => {
+            console.log("Codigo sincrono");
+            console.log("inicio");
+
+
+            function dos(){
+                console.log("dos");
+            }
+
+            function uno(){
+                console.log("uno");
+                dos();
+                console.log("tres");
+            }
+
+            uno();
+            console.log("fin");
+
+        })();
+
+
+        console.log("************************");
+        //Código Asíncrono no Bloqueante 
+
+
+        (() => {
+            console.log("Codigo Asincrono");
+            console.log("inicio");
+
+
+            function dos(){
+                setTimeout(function(){
+                    //console.log("dos");
+                }, 1000);
+
+            }
+
+            function uno(){
+                setTimeout(function(){
+                    //console.log("uno");
+                }, 0);
+                dos();
+                console.log("tres");
+            }
+
+            uno();
+            console.log("fin");
+
+        })();
+
+
+
+        // JavaScript usa un modelo asincrono y no bloqueante con un loop de eventos implementado en un solo hilo( Single thread ), para operaciones de entrada y salida (Input/Output) 
+
+        console.clear();
+
+
+
+        //*********************** Para trabajar la asincronia *****************
+
+        //*************************** Callbacks (Llamadas de vuelta)************* - es una funcion que se va a ejecutar despues de que otra lo haga
+
+        function cuadradoCallback(value, callback){
+           let tiempo = setTimeout(() => {
+                callback(value, value * value);
+            }, 0 | Math.random() * 1000);
+
+            
+         clearTimeout(tiempo);// se coloco para detener el setTime
+        }
+
+        cuadradoCallback(0, (value, result) =>{
+        console.log("inicia Callback");
+        console.log(`Callback: ${value}, ${result}`);
+            cuadradoCallback(1, (value, result) =>{
+            console.log(`Callback: ${value}, ${result}`);
+                cuadradoCallback(2, (value, result) =>{
+                console.log(`Callback: ${value}, ${result}`);
+                    cuadradoCallback(3, (value, result) =>{
+                    console.log(`Callback: ${value}, ${result}`);
+                        cuadradoCallback(4, (value, result) =>{
+                        console.log(`Callback: ${value}, ${result}`);
+                            cuadradoCallback(5, (value, result) =>{
+                            console.log(`Callback: ${value}, ${result}`);
+                            console.log("Final Callback");
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+
+        // las callbacks sirven para llevar un control en la asincronia ya que existen funciones o procesos que aunque se manejen en segundo plano se requieren para poder pasar a otros
+
+
+        // ************************ Promesas **********************
+
+        function cuadradoPromise(value){
+            if(typeof value !== "number") {
+                return Promise.reject(`Error!!! el valor "${value}" ingresado no es un número`);
+            }
+            // las promise se pueden ver como in if-else
+            return new Promise((resolve, reject) => {// resolve es la parte que resuelve la promesa y el reject la que la rechaza
+                let tiempo = setTimeout(() => {
+                resolve({
+                    value,
+                    result: value * value
+                    });
+                }, 0 | Math.random() * 1000);
+
+                clearTimeout(tiempo);// detuvimos el setTimeout
+            });
+        }
+
+        cuadradoPromise(0)
+        .then((obj) => {
+            console.log("Inicio Promise");
+            console.log(`Promise: ${obj.value}, ${obj.result}`);
+            return cuadradoPromise(1);
+        })
+        .then((obj) => {
+            console.log(`Promise: ${obj.value}, ${obj.result}`);
+            return cuadradoPromise(2);
+        })
+        .then((obj) => {
+            console.log(`Promise: ${obj.value}, ${obj.result}`);
+            return cuadradoPromise(3);
+        })
+        .then((obj) => {
+            console.log(`Promise: ${obj.value}, ${obj.result}`);
+            return cuadradoPromise(4);
+        })
+        .then((obj) => {
+            console.log(`Promise: ${obj.value}, ${obj.result}`);
+            return cuadradoPromise(5);
+        })
+        .then((obj) => {
+            console.log(`Promise: ${obj.value}, ${obj.result}`);
+            console.log("Fin Promise");
+        })
+        .catch(err => console.error(err));
+
+
+        //Se recomienda usar promesas cuando se va a mandar a llamar varias veces una misma funcion ya que es mas ordenado y tambien permite una mejor manipulacion de errores
+
+
+
+        //************ Async - Await (Funciones asincronas) **************
+        // las funciones asincronas van de la mano y se complementan con las promesas para asi poder tener una mejor estructuracion del código
+
+        function cuadradoProm(value){
+            // se realiza la validacion de errores
+            if(typeof value !== "number") {
+                return Promise.reject(`Error!!! el valor "${value}" ingresado no es un número`);
+            }
+
+            // nos retorna un nuevo objeto de la Promise que aplicara el resolve dentro de un setTimeout 
+            return new Promise((resolve, reject) => {
+                let tiempo = setTimeout(() => {
+                resolve({
+                    value,
+                    result: value * value
+                    });
+                }, 0 | Math.random() * 1000);
+
+            });
+        }
+
+        // para convertir una funcion en asincrona necesita la palabra async
+        async function funcionAsincronaDeclarada() {
+            try {
+                console.log(`Inicio Async Function`);
+
+                let obj = await cuadradoProm(0);// await le dice a JS que va a esperar el resultado antes de pasar a la siguiente linea y como vemos nuestra varible consume el valor de una promesa 
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(1);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(2);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(3);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(4);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(5);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                console.log("Fin Async Function")
+                
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        funcionAsincronaDeclarada();// aqui mandamos llamar la funcion
+
+        const funcionAsincronaExpresada = async () => {// aqui se declara que es asincrona de este lado
+
+            try {
+                console.log(`Inicio Async Function`);
+
+                let obj = await cuadradoProm(6);// await le dice a JS que va a esperar el resultado antes de pasar a la siguiente linea
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(7);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(8);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(9);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(10);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                obj = await cuadradoProm(11);
+                console.log(`Async Function: ${obj.value}, ${obj.result}`);
+
+                console.log("Fin Async Function")
+                
+            } catch (err) {
+                console.error(err);
+            }
+
+        }
+
+        funcionAsincronaExpresada();// como son funciones deben ser mandadas a llamar
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programación Orientada a Objetos</title>
+</head>
+
+<body>
+    <h1>Programación Orientada a Objetos </h1>
+    <script>
+
+        // POO 
+        /*
+        Clases -- Modelo a seguir.
+        Objetos -- Es una instancia de una clase
+            Atributos -- Es una caracteristica o propiedad del objeto(son variables dentro de un objeto)
+            Métodos -- son las acciones que un objeto puede realizar (son funciones dentro de un objeto)
+        */
+        // **************************** Prototipos *******************************}
+
+        {
+            //funcion constructora version 1
+            function Animal(nombre, genero) {
+                // atributos
+                this.nombre = nombre;
+                this.genero = genero;
+
+                //métodos
+                this.sonar = function () {// cuando se trabajan con funciones constructoras, tanto las variables como los métodos que ocupes deben hacer referencia con la palabra this
+                    console.log("Hago sonidos por que estoy vivo");
+                }
+
+                this.saludar = function () {
+                    console.log(`Hola me llamo ${this.nombre}`);
+                }
+            }
+
+            const snoopy = new Animal("Snoopy", "Macho"),
+                lolaBunny = new Animal("LolaBunny", "Hembra");
+            console.log(snoopy);
+            console.log(lolaBunny);
+
+            snoopy.sonar();
+            snoopy.saludar();
+            lolaBunny.sonar();
+            lolaBunny.saludar();
+            console.clear();
+        }
+
+        {
+            // funcion constructora donde asignamos los metodos al prototipo, no a la funcion como tal
+
+            function Animal(nombre, genero) {
+                // atributos
+                this.nombre = nombre;
+                this.genero = genero;
+
+            }
+
+            //métodos agregados al prototipo de la funcion constructora esto solo le deja los metodos a la funcion constructora y asi evitamos el duplicado de metodos al crear objetos del prototipo 
+
+            Animal.prototype.sonar = function () {
+                console.log("Hago sonidos por que estoy vivo");
+            }
+
+            Animal.prototype.saludar = function () {
+                console.log(`Hola me llamo ${this.nombre}`);
+            }
+
+
+            // Herencia Prototípica 
+
+            // se crea una funcion constructora  llamada Perro 
+            function Perro(nombre, genero, tamanio) {
+                this.super = Animal;// a travez de una variable agregamos el valor del prototipo perro
+                this.super(nombre, genero); // le indicamos que va a tener los mismos atributos que en Animal
+                this.tamanio = tamanio;// mas otro que se llama tamanio
+            }
+
+            // Perro esta heredando de animal
+            Perro.prototype = new Animal(); // indicamos que el prtototipo de perro va a ser igual al del animal y asi heredara todo
+            Perro.prototype.contructor = Perro;// le damos el mismo nombre para que su constructor se llame igual Perro
+
+            // sobreescritura de metodos del prototipo padre en el hijo
+            Perro.prototype.sonar = function(){
+                console.log("Soy un perro y mi sonido es un ladrido");
+            }
+
+            //Se creo un nuevo metodo que pertenece solo al Perro y no al Animal
+            Perro .prototype.ladrar = function(){
+                console.log("guaw guaw");
+            }
+
+            const snoopy = new Perro("Snoopy", "Macho", "Mediano"),
+                lolaBunny = new Animal("LolaBunny", "Hembra");
+            console.log(snoopy);
+            console.log(lolaBunny);
+
+            snoopy.sonar();
+            snoopy.saludar();
+            snoopy.ladrar();
+            lolaBunny.sonar();
+            lolaBunny.saludar();
+
+            console.clear();
+
+        }
+
+
+
+        //**************************** CLASES  Y HERENCIA **************************
+        {
+
+            class Animal {
+
+                // el constructor es un metodo especial que se ejecuta en el momento de instanciar la clase
+                constructor (nombre, genero){
+                    this.nombre = nombre;
+                    this.genero = genero;
+                }
+
+                // Métodos
+                sonar(){
+                    console.log("Hago sonidos por que estoy vivo");
+                }
+
+                saludar(){
+                    console.log(`Hola me llamo ${this.nombre}`);
+                }
+
+            }
+
+
+            class Perro extends Animal{
+                constructor (nombre, genero, tamanio){
+                    //Super es un metodo que manda a llamar al constructor de la clase padre
+                    super(nombre, genero);
+                    this.tamanio = tamanio;
+                    this.raza = null;
+                }
+
+
+                sonar(){
+                    console.log("Soy un perro y mi sonido es un ladrido");
+                }
+                ladrar(){
+                    console.log("Guauuu Guauuu !!!!");
+                }
+
+
+
+
+                // Un método estatico es aquel que se piede utilizar sin la necesidad de instanciar la clase
+                static queEres(){
+                    console.log("Soy un perro y este es un método estatico");
+                }
+
+                //los Setters y Getters son métodos especiales que nos permiten establecer y obtener los valores de atributos en nuestras clases
+
+                get getRaza(){
+                    return this.raza;
+                }
+
+                set setRaza(raza){
+                    this.raza = raza;
+                }
+
+            }
+
+
+
+
+
+            Perro.queEres();
+
+            const mimi = new Animal("Mimi", "Hembra"),
+                  scooby = new Perro("Scooby", "Macho", "Gigante");
+
+
+            console.log(mimi);
+            mimi.saludar();
+            mimi.sonar();
+            console.log(scooby);
+            scooby.saludar();
+            scooby.sonar();
+            scooby.ladrar();
+
+            // los métodos getter y setter se mandan a llamar como si fueran un atributo y no un método
+            scooby.getRaza;// sin los parentesis ya que js lo convierte como si fuera un atributo y no un método
+            console.log(scooby.getRaza);
+            scooby.setRaza= "Gran Danes"; 
+            console.log(scooby.getRaza);           
+
+            console.clear();
+
+        }
+
+        //*********************** Objeto Console ********************
+        // console sirve tanto en el front como en el back con node
+        {
+
+            console.log(console);
+            console.error("Esto es un error");
+            console.warn("Esto es un alerta");
+            console.info("Esto es un mensaje informativo");
+            console.log("Esto es un registro de lo que ocurre dentro de nuestra aplicación");
+
+            // Para obtener mas info sobre el objeto console visita mozilla developer
+            /*
+            console.table - hace una tabla de un arreglo o un  objeto
+            console.group - agrupa conjuntos de salida en la consola
+            console.time - timeEnd - mide el tiempo que tarda en ejecutarse el codigo
+            console.count - indica el numero de veces que se ejecuto un codigo
+            console.assert  - sirve como un metodo de tester e indica si una condición se cumple        
+            
+            */
+
+            console.clear();
+
+        }
+
+        // ******************** Objeto Date ****************************
+        {
+            console.log(Date());
+
+            //lo ideal es guardar dentro de un a variable el objeto Date
+
+            let fecha = new Date();
+            console.log(fecha);
+
+            console.log(fecha.getDate());// dia del mes
+            console.log(fecha.getDay());// dia de la semana 0 = domingo --- 6 = sabado
+            console.log(fecha.getMonth()); // enero = 0 --- diciembre = 11
+            console.log(fecha.getYear());// Indica a partir de 1900 cuantos años van pasando como sugerencia no usar este sino el de abajo
+            console.log(fecha.getFullYear());// indica el año en el que estamos
+            console.log(fecha.getHours());// formato de 0 a 23 horas
+            console.log(fecha.getMinutes()); //minutos
+            console.log(fecha.getSeconds());// segundos
+            console.log(fecha.getMilliseconds());//milisegundos
+            console.log(fecha.toString());// para convertir a String el Date de la fecha y mostrarla mas entendible 
+            console.log(fecha.toDateString());// muestra la fecha en formato string
+            console.log(fecha.toLocaleString());// muestra la fecha mas entendible  ----- 14/11/2020 19:44:32
+            console.log(fecha.toLocaleTimeString());// muestra solo la hora hh/mm/ss
+            console.log(fecha.getTimezoneOffset());// muestra la zona horaria de mexico -- 360
+            console.log(fecha.getUTCDate());// nos muestra la fecha partiendo de la hora 0 o el horario de londres
+            console.log(fecha.getUTCHours());// la hora partiendo de la hora 0 del meridiano de grendwitch
+            console.log(Date.now());// indica cuantos segundos han pasado desde el 1 de enero de 1970 
+            // para iniciar en el cumpleaños de aguien 
+            let cumpleRam = new Date(1996, 3, 10);
+            console.log(cumpleRam);
+
+            console.clear();
+
+        }
+
+        // ****************** Objeto Math ****************************
+        //math es un objeto estatico por lo tanto cuando se quiera invocar alguno de sus metodos se llama directamente del objeto
+        {
+            console.log(Math);
+            console.log(Math.abs(7.8)); // devuelve el valor absoluto
+            console.log(Math.abs(-7.8));// 7.8
+            console.log(Math.ceil(7.2));// redondea el numero siempre al mayor 7.2 = 8
+            console.log(Math.floor(7.8));// redondea el numero siempre al menor 7.8 = 7
+            console.log(Math.round(7.51));//redondea el numero segun la proximidad 7.51 = 8
+            console.log(Math.round(7.49));// 7
+            console.log(Math.sqrt(2));// obtener la raiz cuadrada
+            console.log(Math.pow(2,5));// elevar a la potencia (base, potencia)
+            console.log(Math.sign(-7.8));// indica si el numero es positivo, negativo o 0 -7.8 = -1 - negativo
+            console.log(Math.sign(5));//1 - positivo
+            console.log(Math.sign(0));//0 - cero
+            console.log(Math.random());// da un numero aleatorio entre 0 y 1
+            console.log(Math.random()*1000);// ahora su valor es del 0 al 1000
+            console.log(Math.round(Math.random()* 1000));// para que el número aleatorio sea redondeado 
+
+            console.clear()
+        }
+
+
+        // ***************** Operador Cortocircuito ****************
+        /*
+        Cortocircuito OR - cuando el valor de la izquierda en la expresión siempre pueda validar a true, es el valor que se cargara por defecto
+
+        Cortocircuito AND - cuando el valor de la izquierda en la expresión siempre pueda validar a false, es el valor que se cargara por defecto
+        */
+        {
+            function saludar (nombre){
+                nombre = nombre || "Desconocido"; // esto se hacia antes de que se pudieran colocar parametros por defecto y tambien se llama cortocircuito que funciona como un OR o And en los if
+                console.log(`Hola ${nombre}`);
+            }
+
+            saludar("Ramiro");
+            saludar();
+
+
+            // cuando un valor de la izquierda tienda a true ese valor se colocara y cuando el valor de la izquierda tienda a false se cargara el de la derecha  ----- ese es el operador OR
+
+
+            console.log("Cadena" || "valor de la derecha");// imprime cadena ya que tiende a true por que es un string con valor
+            console.log(19 || "Valor de la derecha")// 19 es un numero por lo tanto tiende a true
+            console.log(true || "Valor de la derecha");// true ya que es un true
+            console.log([] || "Valor de la derecha");// [] ya que tiende a true
+            console.log(false || "Valor de la derecha");// valor de la derecha ya que tiende a false
+            console.log(null || "Valor de la derecha"); // valor de la derecha ya que tiende a false
+            console.log(undefined || "Valor de la derecha");// valor de la derecha por que tiende a false 
+
+            // El operador AND es todo lo contrario, cuando el valor de la izquierda tienda a false se cargara ese y cuando el de la izquierda tienda a true se cargara el de la derecha 
+
+            console.log(true && "Valor de la derecha"); // el valor de la derecha ya que tiende a true
+            console.log(undefined && "Valor de la derecha");// undefined ya que el de la izquierda tiende a false 
+            
+
+            console.clear();
+
+        }
+
+
+        // *********************** Alert, confirm y prompt ******************
+        // con node no sirven por que en node no existe el objeto Window exclusivo de los navegadores
+        {
+
+            // estos 3 métodos nos permiten interactuar con el usuario a travez de la consola
+
+            //console.log(window);
+            //let alerta = alert("Hola esto es un alerta");// esto generara una vetana de alerta
+            //let confirmacion = confirm("Hola esto es una confirmación");// genera una ventana donde se lleva a cavo una confirmación -- aceptar/cancelar 
+            //let aviso = prompt("Hola esto es un aviso");// esto permite recibir datos 
+
+            //console.log(alerta);// siempre va a guardar undefined ya que solo sirve para mostrar alertas 
+            //console.log(confirmacion);// arroja true o false dependiendo la eleccion
+            //console.log(aviso);// si se escribe algo y se da aceptar se arroja el valor escrito, si no se escriibe nada y se da el valor aceptar arroja un valor vacio y si se le da cancelar arroja un null
+
+            console.clear();
+
+        }  
+
+        // **************** Expresiones Regulares *************
+
+        {
+            /*
+            son una secuencia de caracteres que forma un patron de busqueda , principalmente utilizada para la busqueda de patrones de cadenas de caracteres
+            */
+
+            let cadena = "hola esto es una cadena de hola ";
+
+            //hay 2 maneras de crear expresiones Reguares
+
+            let expReg = new RegExp("hola","ig");// donde (palabra o cosa a buscar, bandera que significa que tanto o cuantas veces (hay que buscarlas en google para saber cuales hay))
+            //banderas --- g (global que va a buscar todas las que haya), i(ignora mayusculas y minusculas)
+
+            let expReg2 =/hola/ig;// segunda manera de crear una expresion regular --- /la expresion/la bandera
+
+
+
+            // utilización de las expresiones regulares
+
+            //test
+            console.log(expReg.test(cadena))//true ya que si encontro la palabra , solo devuelve un boolean 
+
+            //exec
+            console.log(expReg.exec(cadena));// devuelve un arreglo donde muestra donde lo encontro
+            console.log(expReg2.test(cadena));
+            console.log(expReg2.exec(cadena));
+
+            console.clear();
+
+        }
+
+        //***************** Funciones Anónimas Autoejecutables ************
+        {
+
+            //(function(){})-- seria como si fuera lla parte del nombre (aqui iria lo que se ejecutaria en una funcion normal)
+    
+            (function(){
+                console.log("Mi priemer IIFE");
+            })();
+
+            (function(d, w, c){
+                console.log("Mi segunda IIFE");
+                console.log(d);
+                c.log("este es un console.log");
+            })(document, window, console);
+
+            // hay 4 formas de crear funciones anonimas autoejecutables
+
+            //clásica
+            (function(){
+                console.log("versión Clásica");
+            })();
+
+            //La Crockford
+            ((function(){
+                console.log("versión Crockford");
+            })());
+
+            //unaria 
+            +function(){
+                console.log("versión Unaria");
+            }();
+
+            //Facebook
+            !function(){
+                console.log("Versión Facebook");
+            }();
+
+
+            console.clear()
+        }
+
+
+        // *********** Módulos (Import / Export) ******************
+
+        {
+
+            
+
+
+
+
+
+
+        }
+
+        
+
+
+
+
+        
+
+
+
+
+    </script>
+</body>
+
+</html>

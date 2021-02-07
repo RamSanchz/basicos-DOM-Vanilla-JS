@@ -1,0 +1,11 @@
+{
+  "cadena": "Ram",
+  "numero": "24",
+  "booleano": "true",
+  "arreglo": ["correr", "programar", "cocinar"],
+  "objeto": {
+    "fb": "ramiro sanchez",
+    "email": "dosek1996@gmail.com"
+  },
+  "nulo": null
+}

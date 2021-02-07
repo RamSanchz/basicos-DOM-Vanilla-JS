@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>This Y JSON</title>
+</head>
+
+<body>
+
+  <h1>This Y JSON</h1>
+
+  <script>
+
+
+    //************************ This ***********************
+    console.log(this)// hace referencia al objeto window que es el objeto global de los navegadores 
+
+    console.log(this === window); // es verdadero ya que si hace referencia 
+
+    this.nombre = "Contexto Global";
+    console.log(this.nombre);// aqui this hace referencia al objeto global
+
+    function imprimir() {
+      console.log(this.nombre);
+    }
+
+    imprimir();// apesar de estar dentro de una funcion sigue haciendo referencia al objeto global ya que al estar dentro de una variable expresada esta es igual de ambito global
+
+    const obj = {
+      nombre: "Contexto Objeto",
+      imprimir: function () {
+        console.log(this.nombre);
+      }
+    };
+    obj.imprimir();// pero aqui ya no hace referencia al nombre del contextpo global sino que hace referencia al contexto o el nombre dentro del objeto ya que una vez que al estar dentro del objeto se vuelve una referencia de bloque
+
+    const obj2 = {
+      nombre: "Contexto Objeto 2",
+      imprimir// pasamos la referencia de la funcion imprimir que tenemos en el ambito global
+    };
+
+    obj2.imprimir();// imprime contexto objeto 2 ya que aunque se paso la referencia de la funcion global esta paso a pertenecer al bloque del objeto por lo tanto la palabra this.nombre ahora paso a hacer referencia al nombre del objeto2
+
+    const obj3 = {
+      nombre: "Contexto Objeto 3",
+      imprimir: () => {// cuando se usan arrow functions dentro de un objeto este vuelca la referencia al objeto padre del objeto donde se creo
+        console.log(this.nombre);
+      }
+    };
+
+    obj3.imprimir();// imprime objeto global ya que la arrow function no genera el bloque como las funciones anonimas esta toma el bloque del padre de donde se creo esta funcion: es decir obj3 se creo en el objeto window y la funcion imprimir tomara la referencia del objeto padre del objeto en el que se crea padre: window, hijo:obj3 e imprimir: se crea dentro de obj3
+
+    function Persona(nombre) {
+      this.nombre = nombre;
+
+      //return console.log(this.nombre); aqui retornaria el nombre ram que se le coloco al crear la instancia de Persona ya que en la linea 473 le estamos asignando el valor
+      /*
+      return function () {// pero al retornar una funcion dentro de otra funcion como crea su propio bloque en esta no existe la asignacion del la linea 473 por lo tanto al imprimir no imprimira "ram" sino contexto global
+        console.log(this.nombre);
+      }*/
+
+      //la solucion al retornar una funcion dentro de esta es usar una arrow function ya que esta hereda el bloque del objeto donde se crea por ejemplo se creo en la arrow function y su padre seria la funcion persona y en la funcion persona si existe la asignacion y la variable
+      return () => console.log(this.nombre);
+    }
+
+    let ram = new Persona("ram");
+    ram();// imprime contexto global ya que al no encontrar asignacion en su bloque de una propiedad nombre esta salta al bloque global donde si hay una variable nombre---- al usar la arrow function ya imprime ram
+
+    console.clear();
+
+
+    //************************  CALL, APPLY Y BIND ************************
+
+    //JS desde el 2015 ofrece estos metodos por si quieres reservar la referencia de un bloque
+
+    {
+      this.lugar = "Contexto Global";
+
+      function saludar(saludo, aQuien) {
+        console.log(`${saludo} ${aQuien} desde el ${this.lugar}`);
+      }
+
+      saludar("Hola", "Alondra");
+
+      const obj = {
+        lugar: "Contexto objeto"
+      };
+
+      saludar.call(obj, "Hola", "Ramiro");// call permite mandar a llamar el contexto de otro lado , por ejemplo saludar esta en el ambito global pero gracias a call(objeto donde se encuentra el contexto) pudimos hacer referencia al contexto del objeto
+      saludar.call(null, "Hola", "Ramiro");// si se coloca null este nos saca al contexto global
+      saludar.call(this, "Hola", "Ramiro");// si se coloca this va a hacer referencia al lugar donde este, En este caso estamos en el global pero si estuviera dentro de una funcion tomaria el contexto de la funcion
+
+
+      // call y apply sirven para lo mismo, la diferencia entre ambos es como reciben los parametros despues de que se le pasa el objeto al cual hacen referencia------> call (obj, "Hola", "Ramiro") & apply (obj, ["Adios", "Sánchez"])
+      saludar.apply(obj, ["Adios", "Sánchez"]);
+      saludar.apply(null, ["Adios", "Sánchez"]);// funcionan igual que el call
+      saludar.apply(this, ["Adios", "Sánchez"]);
+
+      const persona = {
+        nombre: "Ram",
+        saludar: function () {
+          console.log(`Hola ${this.nombre}`);
+        }
+      }
+
+      persona.saludar();
+
+      const otraPersona = {
+        // si se queda asi retorna un valor undefined ya que en este objeto no existe la propiedad nombre y por lo tanto no hace referencia a ninguna propiedad ni en el window
+        saludar: persona.saludar.bind(persona)// bind(objeto al que se hara referencia ) sirve para elegir a que objeto se hace referencia
+      }
+
+      otraPersona.saludar();
+
+      console.clear();
+    }
+
+    //******************* JSON (JavaScript Object Notation) ************
+    //******* Notas 
+    // todo archivo json debe comenzar con apertura de {}
+    // las propiedades de los arreglos van entre comillas dobles "" y tambien los valores
+    // no recibe el nombre del objeto, solo se le pasan las propiedades-valores
+
+    const json = {
+      cadena: "Ram",
+      numero: 24,
+      booleano: true,
+      arreglo: ["correr", "programar", "cocinar"],
+      objeto: {
+        fb: "ramiro sanchez",
+        email: "dosek1996@gmail.com"
+      },
+      nulo: null
+    }
+
+    console.log(json);
+
+    console.log(JSON);
+
+
+
+    //JSON tiene 2 metodos
+
+    //JSON.parse()
+
+    console.log("[]")// cuando no se usa el metodo solo seria una cadena de texto pero cuando se pasa con el JSON.parse("[]")aunque esta dentro de comillas ya es un arreglo para js
+    console.log(JSON.parse("[]"));//.parse que sirve para convertir datos en formato JSON a JS
+    console.log(JSON.parse("{}"));
+    console.log(JSON.parse("true"));
+    console.log(JSON.parse("19"));
+    console.log(JSON.parse("null"));
+
+    // JSON no reconoce como formato valido las cadenas de texto ni los undefined
+    //console.log(JSON.parse("Hola mundo"));
+    //console.log(JSON.parse("undefined"));
+
+    //JSON.stringify()
+    // este segundo metodo hace lo contrario, convierte un valore de JS a un valor entendible para formato JSON
+
+    console.log(JSON.stringify(10));// aqui colocamos tipos de datos entendidos por js y este los convierte a simples cadenas de texto que son las que reconoce JSON
+    console.log(JSON.stringify([]));
+    console.log(JSON.stringify({}));
+    console.log(JSON.stringify(true));
+    console.log(JSON.stringify(19));
+    console.log(JSON.stringify(null));
+
+    //.parse() convierte de cadenas de texto a tipos de dato JS
+    //.stringify() convierte de tipos de dato JS a cadenas de texto o formato JS
+
+
+
+  </script>
+
+</body>
+
+</html>
